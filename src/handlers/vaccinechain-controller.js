@@ -10,7 +10,6 @@ const { Gateway } = require('fabric-network');
 const { getContractObject } = require('../../utils/util.js');
 const { NETWORK_PARAMETERS } = require('../../utils/Constants.js');
 const { contractListener } = require('../../utils/Listeners.js');
-const logger = require('../../logger/index.js')(module);
 const {registerEnrollEntityIdentity} = require('./userController.js')
 
 class VaccineChainController {
@@ -35,6 +34,7 @@ class VaccineChainController {
 			console.log("adminDef 	:", adminDef)
 			console.log("JSON.stringify(adminDef) : ", JSON.stringify(adminDef))
 
+
 			const gateway = new Gateway();
 			let  contract  = await getContractObject(orgName, adminId, NETWORK_PARAMETERS.CHANNEL_NAME, NETWORK_PARAMETERS.CHAINCODE_NAME, gateway)
 			console.log('----------Creating Admin Record details------------\n', adminDef)
@@ -42,8 +42,12 @@ class VaccineChainController {
 			await stateTxn.submit(JSON.stringify(adminDef));
 			console.log('*** Admin Details Added: committed');
 
+
 			/*Creating vaccine chain admin Identity*/
-			await registerEnrollEntityIdentity(orgName,user,'admin',userRole)			
+			await registerEnrollEntityIdentity(orgName,user,'admin',userRole)
+
+
+		
 
 			return res.status(200).send({
 				success: true,
@@ -51,8 +55,7 @@ class VaccineChainController {
 			});
 		} catch (error) {
 			console.log("Inside Catch block")
-			console.log("Error Message : ",error.message)
-			logger.error({ userInfo: req.loggerInfo, method: 'VaccineChainAdmin', error })
+			console.log("Error Message :", error.message, ", method: VaccineChainAdmin")
 			return res.status(500).send({
 				success: false,
 				responseMsg: error.message
@@ -94,8 +97,7 @@ class VaccineChainController {
 			});
 		} catch (error) {
 			console.log("Inside Catch block")
-			console.log(error.message)
-			logger.error({ userInfo: req.loggerInfo, method: 'AddEntity' },error.message)
+			console.log("Error Message :", error.message, ", method: AddEntity")
 			return res.status(500).send({
 				success: false,
 				responseMsg: error.message
@@ -128,8 +130,7 @@ class VaccineChainController {
 			});
 		} catch (error) {
 			console.log("Inside Catch block")
-			console.log(error.message)
-			logger.error({ userInfo: req.loggerInfo, method: 'AddProduct' },error.message)
+			console.log("Error Message :", error.message, ", method: AddProduct")
 			return res.status(500).send({
 				success: false,
 				responseMsg: error.message
@@ -168,8 +169,7 @@ class VaccineChainController {
 			});
 		} catch (error) {
 			console.log("Inside Catch block")
-			console.log(error.message)
-			logger.error({ userInfo: req.loggerInfo, method: 'AddProduct' },error.message)
+			console.log("Error Message :", error.message, ", method: AddBatch")
 			return res.status(500).send({
 				success: false,
 				responseMsg: error.message
@@ -201,7 +201,7 @@ class VaccineChainController {
 			let contract = await getContractObject(orgName, manufacturerId, NETWORK_PARAMETERS.CHANNEL_NAME, NETWORK_PARAMETERS.CHAINCODE_NAME, gateway)
 			// await contract.addContractListener(contractListener);
 			console.log(`----------Creating Shippment------------\n`, shipmentDef)
-			let stateTxn = contract.createTransaction('ShipToDistributer');
+			let stateTxn = contract.createTransaction('ShipToDistributor');
 			await stateTxn.submit(JSON.stringify(shipmentDef));
 			console.log('*** Shippment to Distributer: committed');
 			return res.status(200).send({
@@ -210,8 +210,7 @@ class VaccineChainController {
 			});
 		} catch (error) {
 			console.log("Inside Catch block")
-			console.log(error.message)
-			logger.error({ userInfo: req.loggerInfo, method: 'Distribute' },error.message)
+			console.log("Error Message :", error.message, ", method: ShipToDistributer")
 			return res.status(500).send({
 				success: false,
 				responseMsg: error.message
@@ -249,8 +248,7 @@ class VaccineChainController {
 			});
 		} catch (error) {
 			console.log("Inside Catch block")
-			console.log(error.message)
-			logger.error({ userInfo: req.loggerInfo, method: 'ShipToChemist' },error.message)
+			console.log("Error Message :", error.message, ", method: ShipToChemist")
 			return res.status(500).send({
 				success: false,
 				responseMsg: error.message
@@ -288,8 +286,7 @@ class VaccineChainController {
 			});
 		} catch (error) {
 			console.log("Inside Catch block")
-			console.log(error.message)
-			logger.error({ userInfo: req.loggerInfo, method: 'ShipToCustomer' },error.message)
+			console.log("Error Message :", error.message, ", method: ShipToCustomer")
 			return res.status(500).send({
 				success: false,
 				responseMsg: error.message
@@ -320,8 +317,7 @@ class VaccineChainController {
 			});
 		} catch (error) {
 			console.log("Inside Catch block")
-			console.log(error.message)
-			logger.error({ userInfo: req.loggerInfo, method: 'ViewProfileDetails', error })
+			console.log("Error Message :", error.message, ", method: ViewProfileDetails")
 			return res.status(500).send({
 				success: false,
 				responseMsg: error.message
@@ -354,8 +350,7 @@ class VaccineChainController {
 			});
 		} catch (error) {
 			console.log("Inside Catch block")
-			console.log(error.message)
-			logger.error({ userInfo: req.loggerInfo, method: 'UpdateProfile' },error.message)
+			console.log("Error Message :", error.message, ", method: UpdateProfile")
 			return res.status(500).send({
 				success: false,
 				responseMsg: error.message
@@ -388,8 +383,7 @@ class VaccineChainController {
 			});
 		} catch (error) {
 			console.log("Inside Catch block")
-			console.log(error.message)
-			logger.error({ userInfo: req.loggerInfo, method: 'ChangeAdminStatus' },error.message)
+			console.log("Error Message :", error.message, ", method: ChangeAdminStatus")
 			return res.status(500).send({
 				success: false,
 				responseMsg: error.message
@@ -423,8 +417,40 @@ class VaccineChainController {
 			});
 		} catch (error) {
 			console.log("Inside Catch block")
-			console.log(error.message)
-			logger.error({ userInfo: req.loggerInfo, method: 'ChangeEntityStatus' },error.message)
+			console.log("Error Message :", error.message, ", method: ChangeEntityStatus")
+			return res.status(500).send({
+				success: false,
+				responseMsg: error.message
+			});
+		}
+	}
+	async updateStatus(req, res, next) {
+		try {
+			console.log(`*******Update ${req.body.data.docType} Account Status *******`)
+
+			let orgName = req.body.orgName
+			let user = req.body.userId;
+			let updateDef = req.body.data;
+			let docType = req.body.data.docType
+
+			console.log("orgname 		:", orgName)
+			console.log("user  			:", user)
+			console.log("updateDef 		:", updateDef)
+			console.log("JSON.stringify(updateDef) : ", JSON.stringify(updateDef))
+
+			const gateway = new Gateway();
+			let contract = await getContractObject(orgName, user, NETWORK_PARAMETERS.CHANNEL_NAME, NETWORK_PARAMETERS.CHAINCODE_NAME, gateway)
+			console.log(`----------Update ${docType} Account Status------------\n`, updateDef)
+			let stateTxn = contract.createTransaction('ChangeStatus');
+			await stateTxn.submit(JSON.stringify(updateDef));
+			console.log(`*** ${docType} Account Status Updated: committed`);
+			return res.status(200).send({
+				success: true,
+				responseMsg: `${docType} Account Status Successfully`
+			});
+		} catch (error) {
+			console.log("Inside Catch block")
+			console.log("Error Message :", error.message, ", method: ChangeEntityStatus")
 			return res.status(500).send({
 				success: false,
 				responseMsg: error.message
@@ -463,8 +489,7 @@ class VaccineChainController {
 			});
 		} catch (error) {
 			console.log("Inside Catch block")
-			console.log(error.message)
-			logger.error({ userInfo: req.loggerInfo, method: 'GetProductsByManufacturer', error })
+			console.log("Error Message :", error.message, ", method: GetProductsByManufacturer")
 			return res.status(500).send({
 				success: false,
 				responseMsg: error.message
@@ -503,8 +528,7 @@ class VaccineChainController {
 			});
 		} catch (error) {
 			console.log("Inside Catch block")
-			console.log(error.message)
-			logger.error({ userInfo: req.loggerInfo, method: 'GetAssetByEntity', error })
+			console.log("Error Message :", error.message, ", method: GetAssetByEntity")
 			return res.status(500).send({
 				success: false,
 				responseMsg: error.message
@@ -550,8 +574,7 @@ class VaccineChainController {
 			});
 		} catch (error) {
 			console.log("Inside Catch block")
-			console.log(error.message)
-			logger.error({ userInfo: req.loggerInfo, method: 'TrackPacket', error })
+			console.log("Error Message :", error.message, ", method: TrackPacket")
 			return res.status(500).send({
 				success: false,
 				responseMsg: error.message
@@ -595,8 +618,7 @@ class VaccineChainController {
 			});
 		} catch (error) {
 			console.log("Inside Catch block")
-			console.log(error.message)
-			logger.error({ userInfo: req.loggerInfo, method: 'ViewReceipt', error })
+			console.log("Error Message :", error.message, ", method: ViewReceipt")
 			return res.status(500).send({
 				success: false,
 				responseMsg: error.message

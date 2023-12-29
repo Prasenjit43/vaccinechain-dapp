@@ -6,7 +6,6 @@
 
 'use strict';
 
-const logger = require("../logger")(module);
 const adminUserId = 'admin';
 const adminUserPasswd = 'adminpw';
 
@@ -18,7 +17,7 @@ const adminUserPasswd = 'adminpw';
 exports.buildCAClient = (FabricCAServices, ccp, caHostName) => {
 	// Create a new CA client for interacting with the CA.
 	try {
-		logger.info('buildCAClient')
+		console.log("method: buildCAClient")
 		const caInfo = ccp.certificateAuthorities[caHostName]; //lookup CA details from config
 		const caTLSCACerts = caInfo.tlsCACerts.pem;
 		const caClient = new FabricCAServices(caInfo.url, { trustedRoots: caTLSCACerts, verify: false }, caInfo.caName);
@@ -26,14 +25,14 @@ exports.buildCAClient = (FabricCAServices, ccp, caHostName) => {
 		console.log(`Built a CA Client named ${caInfo.caName}`);
 		return caClient;
 	} catch (error) {
-		logger.error('buildCAClient', error)
+		console.log("Error Message :", error.message, ", method: buildCAClient")
 	}
 };
 
 exports.enrollAdmin = async (caClient, wallet, orgMspId) => {
 	try {
 		// Check to see if we've already enrolled the admin user.
-		logger.info('enrollAdmin')
+		console.log("method: enrollAdmin")
 		const identity = await wallet.get(adminUserId);
 		if (identity) {
 			console.log('An identity for the admin user already exists in the wallet');
@@ -42,8 +41,6 @@ exports.enrollAdmin = async (caClient, wallet, orgMspId) => {
 
 		// Enroll the admin user, and import the new identity into the wallet.
 		const enrollment = await caClient.enroll({ enrollmentID: adminUserId, enrollmentSecret: adminUserPasswd });
-		
-		
 		const x509Identity = {
 			credentials: {
 				certificate: enrollment.certificate,
@@ -56,20 +53,18 @@ exports.enrollAdmin = async (caClient, wallet, orgMspId) => {
 		console.log('Successfully enrolled admin user and imported it into the wallet');
 	} catch (error) {
 		console.error(`Failed to enroll admin user : ${error}`);
-		logger.error('enrollAdmin', error)
 		throw error;
 	}
 };
 
 exports.registerAndEnrollUser = async (caClient, wallet, orgMspId, userId, affiliation, role, UserRole, OrgName) => {
 	try {
-		console.log('registerAndEnrollAdmin', userId)
+		console.log('registerAndEnrollUser', userId)
 
 		// Check to see if we've already enrolled the user
 		const userIdentity = await wallet.get(userId);
 		if (userIdentity) {
 			console.log(`An identity for the user ${userId} already exists in the wallet`);
-			// return { message: `An identity for the user ${userId} already exists in the wallet`, success: true };
 			return 'true';
 		}
 		console.log("Userid not exist, go for registration")
@@ -88,16 +83,12 @@ exports.registerAndEnrollUser = async (caClient, wallet, orgMspId, userId, affil
 		const provider = wallet.getProviderRegistry().getProvider(adminIdentity.type);
 		const adminUser = await provider.getUserContext(adminIdentity, adminUserId);
 
-		// Register the hospital admin, enroll the hospital admin, and import the new identity into the wallet.
-		// if affiliation is specified by client, the affiliation value must be configured in CA
 		const secret = await caClient.register({
 			affiliation: affiliation,
 			enrollmentID: userId,
 			role: role,//'admin',
 			attrs: [
 				{ name: "userRole", value: UserRole, ecert: true },
-				// { name: "orgRole", value: OrgRole, ecert: true },
-				// { name: "organization", value: OrgName, ecert: true }
 			]
 		}, adminUser);
 		console.log("Secret : ",secret)
@@ -119,15 +110,11 @@ exports.registerAndEnrollUser = async (caClient, wallet, orgMspId, userId, affil
 		};
 		console.log('Before wallet.put.')
 		await wallet.put(userId, x509Identity);
-		console.log(`Successfully registered and enrolled hospital admin ${userId} and imported it into the wallet`);
-
-		//return { message: `Successfully registered and enrolled hospital admin ${userId} and imported it into the wallet`, success: true };
+		console.log(`Successfully registered and enrolled user ${userId} and imported it into the wallet`);
 		return 'true';
 	} catch (error) {
-		console.error(`Failed to register hospital admin : ${error}`);
-		logger.error('registerAndEnrollHospitalAdmin', error.message)
+		console.error(`Failed to register user : ${error}`);
 		throw error;
-		//return {message: error.message,success:false}
 	}
 };
 

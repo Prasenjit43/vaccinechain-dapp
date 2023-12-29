@@ -22,5 +22,6 @@ router.get("/viewReceipt", vaccinechainController.viewReceipt);
 router.put("/updateProfile", vaccinechainController.updateProfile);
 router.put("/updateAdminStatus", vaccinechainController.updateAdminStatus);
 router.put("/updateEntityStatus", vaccinechainController.updateEntityStatus);
+router.put("/updateStatus", vaccinechainController.updateStatus);
 
 module.exports = router;

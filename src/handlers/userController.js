@@ -10,8 +10,8 @@ const FabricCAServices = require('fabric-ca-client');
 const path = require('path');
 const { buildCAClient, registerAndEnrollUser } = require('../../utils/CAUtil.js');
 const { buildCCPOrg, buildWallet } = require('../../utils/AppUtil.js');
-const logger = require('../../logger')(module);
 const { error } = require('console');
+
 
 
 exports.registerEnrollEntityIdentity = async (org, user,role,userRole) => {
@@ -35,7 +35,6 @@ exports.registerEnrollEntityIdentity = async (org, user,role,userRole) => {
 		department = org + '.department1'
 		console.log(department)
 
-		logger.info({ method: 'registerEnrollEntityIdentity' })
 		console.log("org:", org, ", user:", user,", role:", role, ", userRole:", userRole)
 
 		const ccpOrg = buildCCPOrg(org);
@@ -50,7 +49,7 @@ exports.registerEnrollEntityIdentity = async (org, user,role,userRole) => {
 	}
 	catch (err) {
 		console.log("Inside catch")
-		logger.error({ userInfo: req.loggerInfo, method: 'registerEnrollEntityIdentity', err }, err.message)
+		console.log("Error : ",err.message,",method : registerEnrollEntityIdentity",)
 	}
 
 }

@@ -8,40 +8,37 @@
 
 const fs = require('fs');
 const path = require('path');
-const logger = require('../logger')(module);
 
 exports.buildCCPOrg = (orgName) => {
 	try {
+		console.log("method: buildCCPOrg")
 		let ccpPath ;
 		
 		let org = orgName+ '.example.com';
 		let connection = 'connection-'+orgName+'.json'
 		ccpPath = path.resolve(__dirname, '..', '..','fabric-samples', 'test-network', 'organizations', 'peerOrganizations', org, connection);
 		console.log('ccpPath----', ccpPath)
-		logger.info({method:'buildCCPOrg'})
 		
 		const fileExists = fs.existsSync(ccpPath);
 		if (!fileExists) {
 			throw `Invalid OrgId, Please use the valid Spydra Blockchain OrgId`;
 		}
 		const contents = fs.readFileSync(ccpPath, 'utf8');
-
-		// build a JSON object from the file contents
 		const ccp = JSON.parse(contents);
 
 		return ccp;
 	} catch (error) {
-		logger.error({method:'buildCCPOrg', error})
+		console.log("Error Message :", error.message, ", method: buildCCPOrg")
 	}
-	// load the common connection configuration file
+
 	
 };
 
 
 exports.buildWallet = async (Wallets, walletPath) => {
 	try {
-		logger.info({method:'buildWallet'})
-	// Create a new  wallet : Note that wallet is for managing identities.
+		console.log("method: buildWallet")
+		// Create a new  wallet : Note that wallet is for managing identities.
 		let wallet;
 		if (walletPath) {
 			wallet = await Wallets.newFileSystemWallet(walletPath);
@@ -53,7 +50,7 @@ exports.buildWallet = async (Wallets, walletPath) => {
 
 		return wallet;
 	} catch (error) {
-		logger.error({method:'buildWallet', error})
+		console.log("Error Message :", error.message, ", method: buildWallet")
 	}
 };
 
